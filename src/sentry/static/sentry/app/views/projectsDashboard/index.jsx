@@ -10,15 +10,19 @@ import {t} from 'app/locale';
 import Button from 'app/components/button';
 import ConfigStore from 'app/stores/configStore';
 import IdBadge from 'app/components/idBadge';
-import NoProjectMessage from 'app/components/noProjectMessage';
+// import LightWeightNoProjectMessage from 'app/components/lightWeightNoProjectMessage';
 import PageHeading from 'app/components/pageHeading';
 import ProjectsStatsStore from 'app/stores/projectsStatsStore';
 import SentryTypes from 'app/sentryTypes';
 import getRouteStringFromRoutes from 'app/utils/getRouteStringFromRoutes';
 import space from 'app/styles/space';
+import LoadingIndicator from 'app/components/loadingIndicator';
+import withApi from 'app/utils/withApi';
 import withOrganization from 'app/utils/withOrganization';
-import withProjects from 'app/utils/withProjects';
-import withTeams from 'app/utils/withTeams';
+// import withProjects from 'app/utils/withProjects';
+import withTeamProjects from 'app/utils/withTeamProjects';
+// import withTeams from 'app/utils/withTeams';
+import withUsersTeams from 'app/utils/withUsersTeams';
 
 import Resources from './resources';
 import TeamSection from './teamSection';
@@ -62,7 +66,12 @@ class Dashboard extends React.Component {
     const showResources = projects.length === 1 && !projects[0].firstEvent;
 
     if (showEmptyMessage) {
-      return <NoProjectMessage organization={organization}>{null}</NoProjectMessage>;
+      return (
+        <LoadingIndicator />
+        // <LightWeightNoProjectMessage organization={organization} projects={projects}>
+        //   {null}
+        // </LightWeightNoProjectMessage>
+      );
     }
 
     return (
@@ -139,4 +148,6 @@ const ProjectsHeader = styled('div')`
 `;
 
 export {Dashboard};
-export default withTeams(withProjects(withOrganization(OrganizationDashboard)));
+export default withApi(
+  withOrganization(withUsersTeams(withTeamProjects(OrganizationDashboard)))
+);

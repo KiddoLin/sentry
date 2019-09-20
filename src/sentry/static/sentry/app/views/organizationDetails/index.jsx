@@ -166,3 +166,7 @@ export default class OrganizationDetails extends Component {
     );
   }
 }
+
+export function LightWeightOrganizationDetails(props) {
+  return <OrganizationDetails lightweight={true} {...props} />;
+}
