@@ -170,3 +170,7 @@ class OrganizationEventsV2Test(AcceptanceTestCase, SnubaTestCase):
 
             assert self.browser.element_exists_by_test_id("older-event")
             assert self.browser.element_exists_by_test_id("newer-event")
+
+    @patch("django.utils.timezone.now")
+    def test_modal_from_transactions_view(self, mock_now):
+        pass
