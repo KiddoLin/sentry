@@ -59,7 +59,7 @@ describe('OrganizationDashboard', function() {
       );
 
       expect(wrapper.find('Button[data-test-id="create-project"]').exists()).toBe(false);
-      // expect(wrapper.find('NoProjectMessage').exists()).toBe(true);
+      expect(wrapper.find('LightWeightNoProjectMessage').exists()).toBe(true);
     });
 
     it('renders with 1 project, with no first event', function() {

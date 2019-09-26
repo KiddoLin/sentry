@@ -19,9 +19,7 @@ import space from 'app/styles/space';
 import LoadingIndicator from 'app/components/loadingIndicator';
 import withApi from 'app/utils/withApi';
 import withOrganization from 'app/utils/withOrganization';
-// import withProjects from 'app/utils/withProjects';
 import withTeamProjects from 'app/utils/withTeamProjects';
-// import withTeams from 'app/utils/withTeams';
 import withUsersTeams from 'app/utils/withUsersTeams';
 
 import Resources from './resources';

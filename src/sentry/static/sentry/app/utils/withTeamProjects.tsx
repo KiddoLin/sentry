@@ -1,4 +1,5 @@
 import React from 'react';
+import {isEqual} from 'lodash';
 
 import {Team, Organization, Project} from 'app/types';
 import getDisplayName from 'app/utils/getDisplayName';
@@ -45,12 +46,15 @@ const withTeamProjects = <P extends InjectedProjectsProps>(
     }
 
     componentDidUpdate(prevProps) {
-      if (!this.props.loadingTeams && prevProps !== this.props) {
+      if (!this.props.loadingTeams && !isEqual(prevProps.teams, this.props.teams)) {
         this.fetchProjects();
       }
     }
 
     fetchProjects() {
+      this.setState({
+        loadingProjects: true,
+      });
       const promises = this.getTeamsProjectPromises();
       if (promises.length > 0) {
         Promise.all(promises).then(projects => {
@@ -64,13 +68,13 @@ const withTeamProjects = <P extends InjectedProjectsProps>(
 
     getTeamsProjectPromises() {
       return this.getTeamsProjectEndpoints().map(endpoint => {
-        return this.props.api!.requestPromise(endpoint);
+        return this.props.api.requestPromise(endpoint);
       });
     }
 
     getTeamsProjectEndpoints() {
       return this.props.teams!.map(team => {
-        return `/teams/${this.props.organization!.slug}/${team.slug}/projects/`;
+        return `/teams/${this.props.organization.slug}/${team.slug}/projects/`;
       });
     }
 

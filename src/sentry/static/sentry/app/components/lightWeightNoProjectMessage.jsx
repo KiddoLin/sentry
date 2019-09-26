@@ -12,7 +12,7 @@ import space from 'app/styles/space';
 /* TODO: replace with I/O when finished */
 import img from '../../images/dashboard/hair-on-fire.svg';
 
-export default class NoProjectMessage extends React.Component {
+export default class LightWeightNoProjectMessage extends React.Component {
   static propTypes = {
     /* if the user has access to any projects, we show whatever
     children are included. Otherwise we show the message */

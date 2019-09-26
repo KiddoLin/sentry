@@ -124,7 +124,7 @@ const OrganizationContext = createReactClass({
     }
     const promises = [
       this.props.api.requestPromise(this.getOrganizationDetailsEndpoint(), {
-        query: {detailed: !!lightweight ? 0 : 1},
+        query: {detailed: lightweight ? 0 : 1},
       }),
       fetchOrganizationEnvironments(this.props.api, this.getOrganizationSlug()),
     ];

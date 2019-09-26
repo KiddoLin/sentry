@@ -36,7 +36,7 @@ class InstallPromptBanner extends React.Component {
     const {organization} = this.props;
 
     // if project with a valid platform then go straight to instructions
-    const projects = []; //organization.projects;
+    const projects = organization.projects;
     const projectCount = projects.length;
     if (projectCount > 0 && getPlatformName(projects[projectCount - 1].platform)) {
       return `/onboarding/${organization.slug}/get-started/`;
