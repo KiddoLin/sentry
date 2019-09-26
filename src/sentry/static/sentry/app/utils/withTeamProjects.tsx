@@ -56,14 +56,12 @@ const withTeamProjects = <P extends InjectedProjectsProps>(
         loadingProjects: true,
       });
       const promises = this.getTeamsProjectPromises();
-      if (promises.length > 0) {
-        Promise.all(promises).then(projects => {
-          this.setState({
-            projects: projects.flat(),
-            loadingProjects: false,
-          });
+      Promise.all(promises).then(projects => {
+        this.setState({
+          projects: projects.flat(),
+          loadingProjects: false,
         });
-      }
+      });
     }
 
     getTeamsProjectPromises() {
