@@ -12,7 +12,7 @@ import withUsersTeams from 'app/utils/withUsersTeams';
 import withTeamProjects from 'app/utils/withTeamProjects';
 import withApi from 'app/utils/withApi';
 
-class InstallPromptBanner extends React.Component {
+class LightWeightInstallPromptBanner extends React.Component {
   static propTypes = {
     organization: PropTypes.object,
     config: SentryTypes.Config,
@@ -104,5 +104,7 @@ const StyledAlert = styled(Alert)`
   }
 `;
 
-export {InstallPromptBanner};
-export default withApi(withUsersTeams(withTeamProjects(withConfig(InstallPromptBanner))));
+export {LightWeightInstallPromptBanner};
+export default withApi(
+  withUsersTeams(withTeamProjects(withConfig(LightWeightInstallPromptBanner)))
+);
