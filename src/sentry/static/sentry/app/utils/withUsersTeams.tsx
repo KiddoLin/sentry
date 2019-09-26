@@ -4,27 +4,34 @@ import {Team, Organization} from 'app/types';
 import getDisplayName from 'app/utils/getDisplayName';
 import {Client} from 'app/api';
 
-type InjectedTeamsProps = {
-  teams: Team[];
+// We require these props when using this HOC
+type DependentProps = {
   api: Client;
   organization: Organization;
 };
 
+type InjectedTeamsProps = {
+  teams: Team[];
+  loadingTeams: boolean;
+};
+
 type State = {
   teams: Team[];
+  loadingTeams: boolean;
 };
 
 const withUsersTeams = <P extends InjectedTeamsProps>(
   WrappedComponent: React.ComponentType<P>
 ) =>
   class extends React.Component<
-    Omit<P, keyof InjectedTeamsProps> & Partial<InjectedTeamsProps>,
+    Omit<P, keyof InjectedTeamsProps> & Partial<InjectedTeamsProps> & DependentProps,
     State
   > {
     static displayName = `withUsersTeams(${getDisplayName(WrappedComponent)})`;
 
     state = {
       teams: [],
+      loadingTeams: true,
     };
 
     componentDidMount() {
@@ -32,41 +39,27 @@ const withUsersTeams = <P extends InjectedTeamsProps>(
     }
 
     fetchTeams() {
-      this.props
-        .api!.requestPromise(this.getUsersTeamsEndpoint())
-        .then((data: Team[]) => {
-          // console.log('we received');
-          // console.log(data);
-          this.setState({
-            teams: data,
-          });
+      this.props.api.requestPromise(this.getUsersTeamsEndpoint()).then((data: Team[]) => {
+        this.setState({
+          teams: data,
+          loadingTeams: false,
         });
+      });
     }
 
     getUsersTeamsEndpoint() {
-      return `/organizations/${this.props.organization!.slug}/teams/`;
+      return `/organizations/${this.props.organization.slug}/teams/`;
     }
 
     render() {
-      return <WrappedComponent {...this.props as P} teams={this.state.teams as Team[]} />;
+      return (
+        <WrappedComponent
+          {...this.props as (P & DependentProps)}
+          loadingTeams={this.state.loadingTeams}
+          teams={this.state.teams as Team[]}
+        />
+      );
     }
   };
-
-// createReactClass<Omit<P, keyof InjectedTeamsProps>, State>({
-//   displayName: `withUsersTeams(${getDisplayName(WrappedComponent)})`,
-
-//   getInitialState() {
-//     // Trigger request to get user's teams
-//     console.log(this.props.api);
-//     setTimeout(this.setState({teams: [{slug: 'hi'}]}), 2000);
-//     return {
-//       teams: [],
-//     };
-//   },
-
-//   render() {
-//     return <WrappedComponent {...this.props as P} teams={this.state.teams as Team[]} />;
-//   },
-// };
 
 export default withUsersTeams;

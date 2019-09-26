@@ -4,39 +4,48 @@ import {Team, Organization, Project} from 'app/types';
 import getDisplayName from 'app/utils/getDisplayName';
 import {Client} from 'app/api';
 
-type InjectedTeamsProps = {
-  projects: Project[];
-  teams: Team[];
+// We require these props when using this HOC
+type DependentProps = {
   api: Client;
   organization: Organization;
+  teams: Team[];
+  loadingTeams: boolean;
+};
+
+type InjectedProjectsProps = {
+  projects: Project[];
+  loadingProjects: boolean;
 };
 
 type State = {
   projects: Project[];
+  loadingProjects: boolean;
 };
 
-const withTeamProjects = <P extends InjectedTeamsProps>(
+const withTeamProjects = <P extends InjectedProjectsProps>(
   WrappedComponent: React.ComponentType<P>
 ) =>
   class extends React.Component<
-    Omit<P, keyof InjectedTeamsProps> & Partial<InjectedTeamsProps>,
+    Omit<P, keyof InjectedProjectsProps> &
+      Partial<InjectedProjectsProps> &
+      DependentProps,
     State
   > {
     static displayName = `withTeamProjects(${getDisplayName(WrappedComponent)})`;
 
     state = {
       projects: [],
+      loadingProjects: true,
     };
 
     componentDidMount() {
-      this.fetchProjects();
+      if (!this.props.loadingTeams) {
+        this.fetchProjects();
+      }
     }
 
     componentDidUpdate(prevProps) {
-      if (prevProps !== this.props) {
-        // console.log('these are different');
-        // console.log(prevProps);
-        // console.log(this.props);
+      if (!this.props.loadingTeams && prevProps !== this.props) {
         this.fetchProjects();
       }
     }
@@ -45,10 +54,9 @@ const withTeamProjects = <P extends InjectedTeamsProps>(
       const promises = this.getTeamsProjectPromises();
       if (promises.length > 0) {
         Promise.all(promises).then(projects => {
-          //   console.log('retrievedProjects');
-          //   console.log(projects);
           this.setState({
             projects: projects.flat(),
+            loadingProjects: false,
           });
         });
       }
@@ -69,8 +77,9 @@ const withTeamProjects = <P extends InjectedTeamsProps>(
     render() {
       return (
         <WrappedComponent
-          {...this.props as P}
+          {...this.props as (P & DependentProps)}
           projects={this.state.projects as Project[]}
+          loadingProjects={this.state.loadingProjects}
         />
       );
     }

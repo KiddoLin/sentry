@@ -10,7 +10,7 @@ import {t} from 'app/locale';
 import Button from 'app/components/button';
 import ConfigStore from 'app/stores/configStore';
 import IdBadge from 'app/components/idBadge';
-// import LightWeightNoProjectMessage from 'app/components/lightWeightNoProjectMessage';
+import LightWeightNoProjectMessage from 'app/components/lightWeightNoProjectMessage';
 import PageHeading from 'app/components/pageHeading';
 import ProjectsStatsStore from 'app/stores/projectsStatsStore';
 import SentryTypes from 'app/sentryTypes';
@@ -34,6 +34,7 @@ class Dashboard extends React.Component {
     teams: PropTypes.array,
     projects: PropTypes.array,
     organization: SentryTypes.Organization,
+    loadingProjects: PropTypes.bool,
   };
 
   componentDidMount() {
@@ -49,7 +50,12 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const {teams, projects, params, organization} = this.props;
+    const {teams, projects, params, organization, loadingProjects} = this.props;
+
+    if (loadingProjects) {
+      return <LoadingIndicator />;
+    }
+
     const sortedProjects = sortProjects(projects);
 
     const {isSuperuser} = ConfigStore.get('user');
@@ -67,10 +73,9 @@ class Dashboard extends React.Component {
 
     if (showEmptyMessage) {
       return (
-        <LoadingIndicator />
-        // <LightWeightNoProjectMessage organization={organization} projects={projects}>
-        //   {null}
-        // </LightWeightNoProjectMessage>
+        <LightWeightNoProjectMessage organization={organization} projects={projects}>
+          {null}
+        </LightWeightNoProjectMessage>
       );
     }
 

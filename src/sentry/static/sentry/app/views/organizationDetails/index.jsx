@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
 import {Client} from 'app/api';
 import {switchOrganization} from 'app/actionCreators/organizations';
@@ -12,6 +13,7 @@ import OrganizationContext from 'app/views/organizationContext';
 import SentryTypes from 'app/sentryTypes';
 
 import InstallPromptBanner from './installPromptBanner';
+import LightWeightInstallPromptBanner from './lightWeightInstallPromptBanner';
 
 class DeletionInProgress extends Component {
   static propTypes = {
@@ -124,6 +126,10 @@ class DeletionPending extends Component {
 }
 
 class OrganizationDetailsBody extends Component {
+  static propTypes = {
+    lightweight: PropTypes.bool,
+  };
+
   static contextTypes = {
     organization: SentryTypes.Organization,
   };
@@ -140,7 +146,11 @@ class OrganizationDetailsBody extends Component {
     }
     return (
       <React.Fragment>
-        {organization && <InstallPromptBanner organization={organization} />}
+        {organization && this.props.lightweight ? (
+          <LightWeightInstallPromptBanner organization={organization} />
+        ) : (
+          <InstallPromptBanner organization={organization} />
+        )}
         <ErrorBoundary>{this.props.children}</ErrorBoundary>
         <Footer />
       </React.Fragment>
@@ -149,6 +159,10 @@ class OrganizationDetailsBody extends Component {
 }
 
 export default class OrganizationDetails extends Component {
+  static propTypes = {
+    lightweight: PropTypes.bool,
+  };
+
   componentDidUpdate(prevProps) {
     if (
       prevProps.params &&
@@ -161,7 +175,9 @@ export default class OrganizationDetails extends Component {
   render() {
     return (
       <OrganizationContext includeSidebar useLastOrganization {...this.props}>
-        <OrganizationDetailsBody>{this.props.children}</OrganizationDetailsBody>
+        <OrganizationDetailsBody lightweight={this.props.lightweight}>
+          {this.props.children}
+        </OrganizationDetailsBody>
       </OrganizationContext>
     );
   }
