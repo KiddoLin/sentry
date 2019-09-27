@@ -127,7 +127,11 @@ class DeletionPending extends Component {
 
 class OrganizationDetailsBody extends Component {
   static propTypes = {
-    lightweight: PropTypes.bool,
+    detailed: PropTypes.number,
+  };
+
+  static defaultProps = {
+    detailed: 1,
   };
 
   static contextTypes = {
@@ -146,10 +150,10 @@ class OrganizationDetailsBody extends Component {
     }
     return (
       <React.Fragment>
-        {organization && this.props.lightweight ? (
-          <LightWeightInstallPromptBanner organization={organization} />
-        ) : (
+        {organization && this.props.detailed ? (
           <InstallPromptBanner organization={organization} />
+        ) : (
+          <LightWeightInstallPromptBanner organization={organization} />
         )}
         <ErrorBoundary>{this.props.children}</ErrorBoundary>
         <Footer />
@@ -160,7 +164,11 @@ class OrganizationDetailsBody extends Component {
 
 export default class OrganizationDetails extends Component {
   static propTypes = {
-    lightweight: PropTypes.bool,
+    detailed: PropTypes.number,
+  };
+
+  static defaultProps = {
+    detailed: 1,
   };
 
   componentDidUpdate(prevProps) {
@@ -175,7 +183,7 @@ export default class OrganizationDetails extends Component {
   render() {
     return (
       <OrganizationContext includeSidebar useLastOrganization {...this.props}>
-        <OrganizationDetailsBody lightweight={this.props.lightweight}>
+        <OrganizationDetailsBody detailed={this.props.detailed}>
           {this.props.children}
         </OrganizationDetailsBody>
       </OrganizationContext>
@@ -184,5 +192,5 @@ export default class OrganizationDetails extends Component {
 }
 
 export function LightWeightOrganizationDetails(props) {
-  return <OrganizationDetails lightweight={true} {...props} />;
+  return <OrganizationDetails detailed={0} {...props} />;
 }

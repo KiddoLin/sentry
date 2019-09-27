@@ -51,16 +51,15 @@ const withTeamProjects = <P extends InjectedProjectsProps>(
       }
     }
 
-    fetchProjects() {
+    async fetchProjects() {
       this.setState({
         loadingProjects: true,
       });
       const promises = this.getTeamsProjectPromises();
-      Promise.all(promises).then(projects => {
-        this.setState({
-          projects: projects.flat(),
-          loadingProjects: false,
-        });
+      const projects: Project[][] = await Promise.all(promises);
+      this.setState({
+        projects: projects.flat(),
+        loadingProjects: false,
       });
     }
 

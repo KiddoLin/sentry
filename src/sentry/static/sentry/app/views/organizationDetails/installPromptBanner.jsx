@@ -13,6 +13,12 @@ class InstallPromptBanner extends React.Component {
   static propTypes = {
     organization: PropTypes.object,
     config: SentryTypes.Config,
+    detailed: PropTypes.number,
+    projects: PropTypes.arrayOf(SentryTypes.Project), // will need to be provided if detailed = 0
+  };
+
+  static defaultProps = {
+    detailed: 1,
   };
 
   componentDidMount() {
@@ -25,18 +31,16 @@ class InstallPromptBanner extends React.Component {
   }
 
   sentFirstEvent() {
-    const {
-      organization: {projects},
-      config,
-    } = this.props;
+    const {config, detailed} = this.props;
+    const {projects} = detailed ? this.props.organization : this.props;
     return !!projects.find(p => p.firstEvent) || !!config.sentFirstEvent;
   }
 
   get url() {
-    const {organization} = this.props;
+    const {organization, detailed} = this.props;
 
     // if project with a valid platform then go straight to instructions
-    const projects = organization.projects;
+    const projects = detailed ? organization.projects : this.props.projects;
     const projectCount = projects.length;
     if (projectCount > 0 && getPlatformName(projects[projectCount - 1].platform)) {
       return `/onboarding/${organization.slug}/get-started/`;

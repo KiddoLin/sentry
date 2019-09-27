@@ -10,7 +10,7 @@ import {t} from 'app/locale';
 import Button from 'app/components/button';
 import ConfigStore from 'app/stores/configStore';
 import IdBadge from 'app/components/idBadge';
-import LightWeightNoProjectMessage from 'app/components/lightWeightNoProjectMessage';
+import NoProjectMessage from 'app/components/noProjectMessage';
 import PageHeading from 'app/components/pageHeading';
 import ProjectsStatsStore from 'app/stores/projectsStatsStore';
 import SentryTypes from 'app/sentryTypes';
@@ -71,9 +71,9 @@ class Dashboard extends React.Component {
 
     if (showEmptyMessage) {
       return (
-        <LightWeightNoProjectMessage organization={organization} projects={projects}>
+        <NoProjectMessage organization={organization} projects={projects} detailed={0}>
           {null}
-        </LightWeightNoProjectMessage>
+        </NoProjectMessage>
       );
     }
 

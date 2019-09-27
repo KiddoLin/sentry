@@ -38,15 +38,16 @@ const withUsersTeams = <P extends InjectedTeamsProps>(
       this.fetchTeams();
     }
 
-    fetchTeams() {
+    async fetchTeams() {
       this.setState({
         loadingTeams: true,
       });
-      this.props.api.requestPromise(this.getUsersTeamsEndpoint()).then((data: Team[]) => {
-        this.setState({
-          teams: data,
-          loadingTeams: false,
-        });
+      const data: Team[] = await this.props.api.requestPromise(
+        this.getUsersTeamsEndpoint()
+      );
+      this.setState({
+        teams: data,
+        loadingTeams: false,
       });
     }
 

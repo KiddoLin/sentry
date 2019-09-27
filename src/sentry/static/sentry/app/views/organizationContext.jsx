@@ -42,7 +42,7 @@ const OrganizationContext = createReactClass({
     useLastOrganization: PropTypes.bool,
     organizationsLoading: PropTypes.bool,
     organizations: PropTypes.arrayOf(SentryTypes.Organization),
-    lightweight: PropTypes.bool,
+    detailed: PropTypes.number,
   },
 
   childContextTypes: {
@@ -50,6 +50,12 @@ const OrganizationContext = createReactClass({
   },
 
   mixins: [Reflux.listenTo(ProjectActions.createSuccess, 'onProjectCreation')],
+
+  getDefaultProps() {
+    return {
+      detailed: 1,
+    };
+  },
 
   getInitialState() {
     return {
@@ -119,7 +125,7 @@ const OrganizationContext = createReactClass({
   },
 
   fetchData() {
-    const {lightweight} = this.props;
+    const {detailed} = this.props;
     if (!this.getOrganizationSlug()) {
       this.setState({loading: this.props.organizationsLoading});
       return;
@@ -127,7 +133,7 @@ const OrganizationContext = createReactClass({
     metric.mark('organization-details-fetch-start');
     const promises = [
       this.props.api.requestPromise(this.getOrganizationDetailsEndpoint(), {
-        query: {detailed: lightweight ? 0 : 1},
+        query: {detailed},
       }),
       fetchOrganizationEnvironments(this.props.api, this.getOrganizationSlug()),
     ];
@@ -146,7 +152,7 @@ const OrganizationContext = createReactClass({
           scope.setTag('organization', data.id);
         });
 
-        if (!lightweight) {
+        if (detailed) {
           TeamStore.loadInitialData(data.teams);
           ProjectsStore.loadInitialData(data.projects);
         }
@@ -159,7 +165,7 @@ const OrganizationContext = createReactClass({
             ({path}) => path && path.includes('/organizations/:orgId/issues/:groupId/')
           )
         ) {
-          if (!lightweight) {
+          if (detailed) {
             GlobalSelectionStore.loadInitialData(data, this.props.location.query);
           }
         }
